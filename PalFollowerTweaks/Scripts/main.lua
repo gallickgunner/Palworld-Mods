@@ -2,6 +2,7 @@ local MOD_NAME = "PalFollowerTweaks"
 
 local FUNNEL_FOLLOW_CLASS_NAME = "BP_AIAction_FunnelFollow_C"
 local TARGET_NATIVE_BASE = "/Script/Pal.PalAIActionBase"
+local FUNNEL_ACTION_START_BP = "/Game/Pal/Blueprint/Controller/AIAction/Otomo/BP_AIAction_OtomoFollow.BP_AIAction_OtomoFollow_C:ActionStart"
 local FUNNEL_CHARACTER_NATIVE_NAME = "PalFunnelCharacter"
 local FUNNEL_ON_ACTIVE = "/Script/Pal.PalFunnelCharacter:OnActive"
 
@@ -16,21 +17,10 @@ local DEFAULT_CONFIG = {
 local Config = DEFAULT_CONFIG
 local CONFIG_PATH = nil
 local local_player_controller = nil
-local local_player_pawn = nil
 
 local function log(message)
     print(string.format("[%s] %s\n", MOD_NAME, tostring(message)))
 end
-
-
-local function same_object(a, b)
-    if not a or not b or not a:IsValid() or not b:IsValid() then
-        return false
-    end
-
-    return a:GetAddress() == b:GetAddress()
-end
-
 
 local function show_notification(message)
    if not local_player_controller
@@ -260,34 +250,11 @@ local function is_funnel_follow_action(action)
 end
 
 
-local function is_local_funnel_character(character)
-    
-    local trainer = character:GetTrainer()
-
-    return same_object(trainer, local_player_pawn)
-end
-
-
-local function is_local_funnelfollow_action(action)
-   
-    local controller = action:GetController()
-
-    if not controller or not controller:IsValid() then
-        return false
-    end
-
-    local funnel = controller:K2_GetPawn()
-
-    if not funnel or not funnel:IsValid() then
-        return false
-    end
-
-    return is_local_funnel_character(funnel)
-end
-
-
 local function apply_offset(action)
-    
+    if not is_funnel_follow_action(action) then
+        return false
+    end
+		
     local forward_list = action.TargetLocationDistanceForwardList
     local right_list = action.TargetLocationDistanceRightList
 
@@ -317,7 +284,11 @@ end
 
 
 local function apply_funnel_default_scale(character, update_visual)
-   
+    
+		if not character or not character:IsValid() then
+        return false
+    end
+		
     local mesh = character.Mesh
 		local static = character.StaticCharacterParameterComponent
 
@@ -374,7 +345,7 @@ local function apply_offset_to_existing()
     end
 
     for _, action in ipairs(actions) do
-        if action and action:IsValid() and is_local_funnelfollow_action(action) then
+        if action and action:IsValid() then
             apply_offset(action)
         end
     end
@@ -388,13 +359,8 @@ local function apply_scale_to_existing()
         return
     end
 
-    for _, character in ipairs(characters) do
-        if character and character:IsValid() and is_local_funnel_character(character) then
-            apply_funnel_default_scale(
-                character,
-                true
-            )
-        end
+    for _, character in ipairs(characters) do       
+				apply_funnel_default_scale(character,true)
     end
 end
 
@@ -426,23 +392,6 @@ CONFIG_PATH = get_scripts_dir() .. "/config.lua"
 load_initial_config()
 
 
--- Patch only FunnelFollow actions belonging to this machine's local player.
-NotifyOnNewObject(
-    TARGET_NATIVE_BASE,
-    function(action)
-        if is_funnel_follow_action(action) then
-						ExecuteInGameThreadWithDelay(
-								300,
-								function()
-										if is_local_funnelfollow_action(action) then
-												apply_offset(action)
-										end
-								end
-						)
-				end
-    end
-)
-
 --Cache local player controller and pawn on Client restarts
 RegisterHook(
     "/Script/Engine.PlayerController:ClientRestart",
@@ -462,22 +411,33 @@ RegisterHook(
         end
 				
 				local_player_controller = controller
-				log("Cached local player controller.")
-				
-        local pawn = controller:K2_GetPawn()
-
-        if pawn and pawn:IsValid() then
-            local_player_pawn = pawn
-            log("Cached local player pawn.")
-        else
-            local_player_pawn = nil
-						log("Failed to cache local player pawn")
-        end
+				log("Cached local player controller.")				
     end
 )
 
+--Check if blueprint is loaded then hook into BP function
+NotifyOnNewObject(
+    TARGET_NATIVE_BASE,
+    function(action)
+        if not is_funnel_follow_action(action) then
+            return
+        end
 
--- Scale only Funnel characters whose trainer is this machine's local player.
+        RegisterHook(
+						FUNNEL_ACTION_START_BP,
+
+						function(Context, ControlledPawn)
+								local action = Context:get()
+								
+								if is_funnel_follow_action(action) then
+										apply_offset(action)
+								end
+						end
+				)
+				return true
+    end
+)
+
 RegisterHook(
     FUNNEL_ON_ACTIVE,
 
@@ -486,18 +446,10 @@ RegisterHook(
     end,
 
     function(Context)
-        local character = Context:get()
-				
-				if character and character:IsValid() and is_local_funnel_character(character) then
-				
-						apply_funnel_default_scale(
-								character,
-								false
-						)
-				end
+        local character = Context:get()								
+				apply_funnel_default_scale(character,false)
     end
 )
-
 
 RegisterKeyBind(
     Key.F4,
