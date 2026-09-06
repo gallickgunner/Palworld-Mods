@@ -5,6 +5,7 @@ local ConfigUtils = require("Utils.config_utils")
 local CoreUtils = require("Utils.core_utils")
 
 local DEFAULT_CONFIG = require("Defaults.mod_config")
+local DEFAULT_CONFIG_SCHEMA = require("Defaults.mod_config_schema")
 local USER_CONFIG_PATH = CoreUtils.GetConfigDir() .. "config.lua"
 local DEFAULT_CONFIG_PATH = CoreUtils.GetDefaultsDir() .. "mod_config.lua"
 local reload_callbacks = {}
@@ -22,7 +23,7 @@ local function ValidateHotReloadKey()
 end
 
 local function LoadConfig()
-	config = ConfigUtils.LoadConfigFile(USER_CONFIG_PATH, DEFAULT_CONFIG_PATH, DEFAULT_CONFIG)
+	config = ConfigUtils.LoadConfigFile(USER_CONFIG_PATH, DEFAULT_CONFIG_PATH, DEFAULT_CONFIG, DEFAULT_CONFIG_SCHEMA)
 	CoreUtils.debug_logging = config.debug_logging
 	ValidateHotReloadKey()
 end

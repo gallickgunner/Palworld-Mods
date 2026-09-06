@@ -21,37 +21,109 @@
 --  native 1.0 -> final 0.7 .. 0.7     -- Note This method can be used to disable variation for a specific category. Use 1.0 for vanilla sizes.
 --
 -- In any case, just make sure that "min" <= "max". Both can be negative or positive.
-return {
-	min_ride_scale_s = 0.9,
-	disable_tiny_ride_pals = true,
-	size_variation = {
+---@class DefaultModConfig
+local DefaultModConfig = {
+
+	normal_pal_scales = {
 		XS = {
-			min = -0.2,
-			max = 0.3,
+			min = 0.8,
+			max = 1.3
 		},
 		S = {
-			min = -0.3,
-			max = 0.4,
+			min = 0.7,
+			max = 1.4
 		},
 		M = {
-			min = -0.4,
-			max = 0.4,
-		},
-		XL = {
-			min = -0.4,
-			max = -0.15,
+			min = 0.6,
+			max = 1.4
 		},
 		L = {
-			min = -0.4,
-			max = 0.15,
+			min = 0.6,
+			max = 1.15
 		},
+		XL = {
+			min = 0.6,
+			max = 0.8
+		}
 	},
-	min_ride_scale_l = 0.8,
+
+	-- Boss pal native scales are not 1.0. They vary, for e.g Daedream Alpha has 1.5 while Gumoss has 4.0. A value of 2.0 here means double the size of normal vanilla pals.
+	-- A good range can be gotten by doubling your max value above and use it as the mid point for this range. Although for L and XL categories you prolly should choose even less
+	boss_pal_scales = {
+		enabled = true,
+		XS = {
+			min = 2.2,
+			max = 3.0
+		},
+		S = {
+			min = 2.2,
+			max = 3.0
+		},
+		M = {
+			min = 2.2,
+			max = 3.0
+		},
+		L = {
+			min = 1.3,
+			max = 1.5
+		},
+		XL = {
+			min = 1.0,
+			max = 1.2
+		}
+	},
+
+	-- I like lucky pals to be the same size as normal so I copied the normal pal values.
+	rare_pal_scales = {
+		enabled = true,
+		XS = {
+			min = 0.8,
+			max = 1.3
+		},
+		S = {
+			min = 0.7,
+			max = 1.4
+		},
+		M = {
+			min = 0.6,
+			max = 1.4
+		},
+		L = {
+			min = 0.6,
+			max = 1.15
+		},
+		XL = {
+			min = 0.6,
+			max = 0.85
+		}
+	},
+
+	-- All scale values below should be greater than zero. 1.0 is considered the default native scale. So add your min and max to 1.0 to get the range
+	-- of scales for that pal. Then decide the cutoff point for disabling rides. All values below have been set after testing 5-10 mounts of each category	
+	min_ride_scales = {
+		XS = 1.0,
+		S = 0.9,
+		M = 0.8,
+		-- 0.7 can also work but they stop feeling like mounts and some specific mounts like Grizzbolt feel off
+		L = 0.8,
+		-- for xl pals 0.5 works and even 0.4 might work, but they stop feeling like actual mounts and look more like babies.
+		XL = 0.55,
+	},
+
+	-- enabling this will grant all saddle items required for most rideable pals except ones that have specific weapons as requirement (miniguns, hammer, etc)
+	grant_saddles = false,
+	-- enable this to grant the weapon for all rideable pals as well
+	grant_saddle_weapons = false,
+
+
+	--enable hot reload feature
+	enable_hot_reload = true,
+
+	--Hot reload key. Check this for all default keys you can use: https://docs.ue4ss.com/lua-api/table-definitions/key.html
 	hot_reload_key = "HOME",
+
+	-- turn this on when you are facing crashes and send ue4ss logs
 	debug_logging = true,
-	enable_hot_reload = false,
-	min_ride_scale_m = 0.8,
-	min_ride_scale_xl = 0.55,
-	disable_saddle_requirement = true,
-	minimum_scale = 0.1,
 }
+
+return DefaultModConfig

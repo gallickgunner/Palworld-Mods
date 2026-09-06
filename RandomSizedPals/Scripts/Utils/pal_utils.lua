@@ -77,13 +77,13 @@ function PalUtils.IsPalRideableFromHandle(handle)
 	end
 
 	local master_dt_utility = UObjects[UOBJ_PATHS.PAL_MASTER_DT_UTILITY]
-	local item_table = UObjects[UOBJ_PATHS.GAME_ITEM_DATA_TABLE]
+	local item_table = UObjects[UOBJ_PATHS.GAME_ITEM_DT]
 
 	if not IsValid(master_dt_utility, "Failed to find : %s", UOBJ_PATHS.PAL_MASTER_DT_UTILITY) then
 		return nil
 	end
 
-	if not IsValid(item_table, "Failed to find : %s", UOBJ_PATHS.GAME_ITEM_DATA_TABLE) then
+	if not IsValid(item_table, "Failed to find : %s", UOBJ_PATHS.GAME_ITEM_DT) then
 		return nil
 	end
 
@@ -137,6 +137,26 @@ function PalUtils.IsLocalPlayersOtomo(pal_actor)
 	end
 
 	return false
+end
+
+function PalUtils.IsBossExcludingRare(static_char_param)
+	return static_char_param:IsBossPal_Database_ExceptRare()
+		or static_char_param:IsRaidBossPal()
+		or static_char_param:IsTowerBossPal()
+		or static_char_param:IsPredatorBossPal()
+end
+
+function PalUtils.IsBossIncludingRare(static_char_param)
+	return static_char_param:IsBossPal_Database()
+		or static_char_param:IsRaidBossPal()
+		or static_char_param:IsTowerBossPal()
+		or static_char_param:IsPredatorBossPal()
+end
+
+function PalUtils.DebugLogActor(message, actor)
+	if CoreUtils.debug_logging then
+		CoreUtils.Log(message .. " | Pal Name: %s | PalID: %s", actor:GetFullName(), PalUtils.GetUniquePalIDFromActor(actor))
+	end
 end
 
 InitializePalSizeEnum()

@@ -21,13 +21,30 @@ setmetatable(UnrealUtils.UObjects, {
 })
 
 function UnrealUtils.IsValid(obj, ...)
-	local is_valid = obj and obj:IsValid()
+	if not obj then
+		return false
+	end
 
+	local is_valid = obj:IsValid()
+
+	-- If object not valid and we passed a log message, print it to console
 	if not is_valid and select("#", ...) > 0 then
 		CoreUtils.DebugLog(...)
 	end
 
 	return is_valid
+end
+
+function UnrealUtils.GetString(name)
+	if type(name) == "string" then
+		return name
+	end
+
+	if name and name.ToString then
+		return name:ToString()
+	end
+
+	return ""
 end
 
 return UnrealUtils
