@@ -98,6 +98,9 @@ local DefaultModConfig = {
 		}
 	},
 
+	-- If you want to ride tiny pals for the comedic factor, set this to false
+	disable_tiny_ride_pals = true,
+
 	-- All scale values below should be greater than zero. 1.0 is considered the default native scale. So add your min and max to 1.0 to get the range
 	-- of scales for that pal. Then decide the cutoff point for disabling rides. All values below have been set after testing 5-10 mounts of each category	
 	min_ride_scales = {

@@ -44,6 +44,34 @@ function CoreUtils.GetConfigDir()
 	return mod_dir .. "Config/"
 end
 
+function CoreUtils.ReadFile(path, mode)
+	local file = io.open(path, "rb")
+
+	if not file then
+		return nil
+	end
+
+	local contents = file:read("*a")
+	file:close()
+	return contents
+end
+
+function CoreUtils.WriteFile(path, contents, mode)
+	local file = io.open(path, mode)
+
+	if not file then
+		return nil
+	end
+
+	local wrote = file:write(contents)
+	file:close()
+
+	if not wrote then
+		return nil
+	end
+	return true
+end
+
 function CoreUtils.Log(message, ...)
 	if select('#', ...) > 0 then
 		message = string.format(message, ...)

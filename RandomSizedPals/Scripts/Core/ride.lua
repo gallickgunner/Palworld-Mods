@@ -1,6 +1,6 @@
 ---@class Ride
 local Ride = {}
-
+local Server = require("Server.server")
 local ModConfigManager = require("Managers.mod_config_manager")
 local LocalizationManager = require("Managers.localization_manager")
 local UnrealUtils = require("Utils.unreal_utils")
@@ -8,13 +8,11 @@ local CoreUtils = require("Utils.core_utils")
 local PalUtils = require("Utils.pal_utils")
 local UPaths = require("Constants.upaths")
 local LocalizeTextKeys = require("Constants.localization_text_keys")
-
+local CDO = require("Utils.cdo")
 -- Aliases used often
 local UOBJ_PATHS = UPaths.UOBJ_PATHS
 local FUNC_PATHS = UPaths.FUNC_PATHS
-local Log = CoreUtils.Log
 local DebugLog = CoreUtils.DebugLog
-local DebugLogActor = PalUtils.DebugLogActor
 local IsValid = UnrealUtils.IsValid
 local UObjects = UnrealUtils.UObjects
 
@@ -75,7 +73,7 @@ local function InitItemCache(world_context)
 	end
 
 	--Build ride cache if not available
-	local randomizer_manager = PalUtils.pal_utility:GetRandomizerManager(world_context)
+	local randomizer_manager = CDO.pal_utility:GetRandomizerManager(world_context)
 
 	if not IsValid(randomizer_manager) then
 		DebugLog("Building Ride Item Cache: RandomizerManager is not ready")
@@ -226,7 +224,7 @@ local function IsRidePalTiny(pal)
 end
 
 local function IsBuiltInRandomizerEnabled(world_context)
-	local randomizer_manager = PalUtils.pal_utility:GetRandomizerManager(world_context)
+	local randomizer_manager = CDO.pal_utility:GetRandomizerManager(world_context)
 
 	if not IsValid(randomizer_manager) then
 		return false
@@ -247,38 +245,29 @@ local function wrapTextInRed(text)
 	return "<NumRed_13>" .. text .. "</>"
 end
 
-local function RegisterGrantRideItemsHook()
-	RegisterHook(
-		FUNC_PATHS.NOTIFY_ON_WORLD_LOAD_TO_SERVER,
-		function()
-		end,
-		function(Context)
-			local player_state = Context:get()
+local function OnWorldLoaded(player_state)
+	if not IsValid(player_state) then
+		DebugLog("Player State was not valid in: %s", FUNC_PATHS.NOTIFY_ON_WORLD_LOAD_TO_SERVER)
+		return
+	end
 
-			if not IsValid(player_state) then
-				DebugLog("Player State was not valid in: %s", FUNC_PATHS.NOTIFY_ON_WORLD_LOAD_TO_SERVER)
-				return
-			end
+	-- If player is playing with built in randmoizer on, then return as it already grants all partner skill items.
+	if IsBuiltInRandomizerEnabled(player_state) then
+		return
+	end
 
-			-- If player is playing with built in randmoizer on, then return as it already grants all partner skill items.
-			if IsBuiltInRandomizerEnabled(player_state) then
-				return
-			end
+	local inventory_data = player_state:GetInventoryData()
 
-			local inventory_data = player_state:GetInventoryData()
+	if not IsValid(inventory_data) then
+		DebugLog("Player inventory was not valid in: %s", FUNC_PATHS.NOTIFY_ON_WORLD_LOAD_TO_SERVER)
+		return
+	end
 
-			if not IsValid(inventory_data) then
-				DebugLog("Player inventory was not valid in: %s", FUNC_PATHS.NOTIFY_ON_WORLD_LOAD_TO_SERVER)
-				return
-			end
+	if not InitItemCache(player_state) then
+		return
+	end
 
-			if not InitItemCache(player_state) then
-				return
-			end
-
-			GrantRideItems(player_state)
-		end
-	)
+	GrantRideItems(player_state)
 end
 
 -- Module exported functions
@@ -289,7 +278,7 @@ local function RegisterDisableTinyRideHooks()
 		function()
 		end,
 		function(Context, ReturnValue, Trainer)
-			--DebugLog("Inside IsRestricted")
+			--DebugLog("IsRestrictedByItems firing")
 			local partner_skill = Context:get()
 
 			if not IsValid(partner_skill) then
@@ -424,19 +413,12 @@ local function RegisterDisableTinyRideHooks()
 end
 
 function Ride.Init()
-	local min_ride_scales = mod_config.min_ride_scales
-
-	if min_ride_scales.XS == 0 and
-		min_ride_scales.S == 0 and
-		min_ride_scales.M == 0 and
-		min_ride_scales.L == 0 and
-		min_ride_scales.XL == 0 then
-		return
+	if mod_config.disable_tiny_ride_pals then
+		RegisterDisableTinyRideHooks()
 	end
-	RegisterDisableTinyRideHooks()
 
 	if mod_config.grant_saddle_weapons or mod_config.grant_saddles then
-		RegisterGrantRideItemsHook()
+		Server.RegisterOnClientWorldLoadedCallback(OnWorldLoaded)
 	end
 end
 

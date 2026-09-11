@@ -4,7 +4,8 @@ local PalUtils = {}
 local UnrealUtils = require("Utils.unreal_utils")
 local CoreUtils = require("Utils.core_utils")
 local UPaths = require("Constants.upaths")
-
+local CDO = require("Utils.cdo")
+local UEHelpers = require("UEHelpers")
 -- Aliases used often
 local DebugLog = CoreUtils.DebugLog
 local IsValid = UnrealUtils.IsValid
@@ -13,8 +14,6 @@ local UObjects = UnrealUtils.UObjects
 
 -- Module Variables and Functions
 PalUtils.PAL_SIZE = {}
-PalUtils.pal_utility = UObjects[UOBJ_PATHS.PAL_UTILITY]
-
 -- Local helper
 local function InitializePalSizeEnum()
 	local size_enum = UObjects[UOBJ_PATHS.PAL_SIZE]
@@ -40,20 +39,163 @@ local function InitializePalSizeEnum()
 end
 
 -- Module exported functions
+function PalUtils.GetWorldSaveDirName()
+	local game_instance = UEHelpers.GetGameInstance()
 
-function PalUtils.GetUniquePalIDFromActor(pal_actor)
-	return PalUtils.pal_utility:Convert_PalInstanceIDToString(PalUtils.pal_utility:GetIndividualIDByActor(pal_actor)):ToString()
-end
-
-function PalUtils.GetUniquePalIDFromHandle(handle)
-	return PalUtils.pal_utility:Convert_PalInstanceIDToString(PalUtils.pal_utility:GetIndividualID(handle)):ToString()
-end
-
-function PalUtils.GetPalActorFullName(pal_actor)
-	if IsValid(pal_actor) then
-		return pal_actor:GetFullName()
+	-- If we got a new valid game instance get the world save directory name and load its captured leader data
+	if not IsValid(game_instance) then
+		DebugLog("GameInstance invalid")
+		return nil
 	end
-	return ""
+
+	return game_instance:GetSelectedWorldSaveDirectoryName():ToString()
+end
+
+function PalUtils.IsWildLeader(pal_actor)
+	if not IsValid(pal_actor) then
+		return false
+	end
+
+	if not UObjects.PalUtility:IsPalMonster(pal_actor) then
+		return false
+	end
+
+	if not UObjects.PalUtility:IsWildNPC(pal_actor) then
+		return false
+	end
+
+	local controller = pal_actor:GetController()
+
+	if not IsValid(controller) then
+		return false
+	end
+
+	return controller:IsLeader()
+end
+
+function PalUtils.GetPalSize(pal_actor)
+	local static_char_param = pal_actor.StaticCharacterParameterComponent
+
+	local is_boss = PalUtils.IsBossIncludingRare(static_char_param)
+
+	if not is_boss then
+		return static_char_param.Size
+	end
+
+	local char_param = pal_actor:GetCharacterParameterComponent()
+
+	if not IsValid(char_param) then
+		return nil
+	end
+
+	local indiv_param = char_param:GetIndividualParameter()
+
+	if not IsValid(indiv_param) then
+		return nil
+	end
+
+	local monster_param_dt = UObjects[UOBJ_PATHS.GAME_MONSTER_PARAM_DT]
+	local out_tribe_id_name = {}
+
+	CDO.pal_utility:GetTribeIDNameFromParameter(pal_actor, indiv_param, out_tribe_id_name)
+	local tribe_id_name = out_tribe_id_name.outTribeIDName
+
+	if not tribe_id_name then
+		DebugLog("Failed to get Tribe ID Name in when looking up boss's original size category")
+		return nil
+	end
+
+	local tribe_id_str = tribe_id_name:ToString()
+	local row = monster_param_dt:FindRow(tribe_id_str)
+
+	if not row or not row.Size then
+		return nil
+	end
+
+	return row.Size
+end
+
+function PalUtils.GetCharacterIDFromActor(pal_actor)
+	if not IsValid(pal_actor) then
+		return nil
+	end
+
+	local parameter_component = pal_actor.CharacterParameterComponent
+
+	if not IsValid(parameter_component) then
+		return nil
+	end
+
+	local parameter = parameter_component:GetIndividualParameter()
+
+	if not IsValid(parameter) then
+		return nil
+	end
+
+	local character_id = parameter:GetCharacterID()
+
+	if not character_id then
+		return nil
+	end
+
+	return character_id:ToString()
+end
+
+function PalUtils.GetBossPalOriginalSizeCategory(pal_actor)
+	local char_param = pal_actor:GetCharacterParameterComponent()
+
+	if not IsValid(char_param) then
+		return nil
+	end
+
+	local indiv_param = char_param:GetIndividualParameter()
+
+	if not IsValid(indiv_param) then
+		return nil
+	end
+
+	local monster_param_dt = UObjects[UOBJ_PATHS.GAME_MONSTER_PARAM_DT]
+	local out_tribe_id_name = {}
+
+	CDO.pal_utility:GetTribeIDNameFromParameter(pal_actor, indiv_param, out_tribe_id_name)
+	local tribe_id_name = out_tribe_id_name.outTribeIDName
+
+	if not tribe_id_name then
+		DebugLog("Failed to get Tribe ID Name in when looking up boss's original size category")
+		return nil
+	end
+
+	local tribe_id_str = tribe_id_name:ToString()
+	local row = monster_param_dt:FindRow(tribe_id_str)
+
+	if not row or not row.Size then
+		return nil
+	end
+
+	return row.Size
+end
+
+function PalUtils.GetPalInstanceIdFromActor(pal_actor)
+	local indiv_id = CDO.pal_utility:GetIndividualIDByActor(pal_actor)
+	if indiv_id and not CDO.pal_utility:IsValidInstanceID(indiv_id) then
+		return nil
+	end
+	return CDO.kismet_guid_lib:Conv_GuidToString(indiv_id.InstanceId):ToString()
+end
+
+function PalUtils.GetPalInstanceIdFromHandle(handle)
+	local indiv_id = CDO.pal_utility:GetIndividualID(handle)
+	if indiv_id and not CDO.pal_utility:IsValidInstanceID(indiv_id) then
+		return nil
+	end
+	return CDO.kismet_guid_lib:Conv_GuidToString(indiv_id.InstanceId):ToString()
+end
+
+function PalUtils.GetPalInstanceIdFromIndivId(indiv_id)
+	if not CDO.pal_utility:IsValidInstanceID(indiv_id) then
+		return nil
+	end
+	return CDO.kismet_guid_lib:Conv_GuidToString(indiv_id.InstanceId):ToString()
 end
 
 -- Check if Pal is rideable regardless of any item restrictions.
@@ -126,10 +268,10 @@ function PalUtils.IsPalRideableFromHandle(handle)
 end
 
 function PalUtils.IsLocalPlayersOtomo(pal_actor)
-	local individual_id = PalUtils.pal_utility:GetIndividualIDByActor(pal_actor)
+	local individual_id = CDO.pal_utility:GetIndividualIDByActor(pal_actor)
 
 	if individual_id and individual_id.PlayerUId then
-		local controller = PalUtils.pal_utility:GetPlayerControllerByPlayerUId(pal_actor, individual_id.PlayerUId)
+		local controller = CDO.pal_utility:GetPlayerControllerByPlayerUId(pal_actor, individual_id.PlayerUId)
 
 		if IsValid(controller) and controller:IsLocalPlayerController() then
 			return true
@@ -155,7 +297,7 @@ end
 
 function PalUtils.DebugLogActor(message, actor)
 	if CoreUtils.debug_logging then
-		CoreUtils.Log(message .. " | Pal Name: %s | PalID: %s", actor:GetFullName(), PalUtils.GetUniquePalIDFromActor(actor))
+		CoreUtils.Log(message .. " | Pal Name: %s | PalID: %s", actor:GetFullName(), PalUtils.GetPalInstanceIdFromActor(actor))
 	end
 end
 

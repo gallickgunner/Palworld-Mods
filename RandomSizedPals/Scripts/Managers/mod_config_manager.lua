@@ -48,5 +48,8 @@ function ModConfigManager.GetConfig()
 	return config
 end
 
-config = ModConfigManager.GetConfig()
+function ModConfigManager.Init()
+	config = ModConfigManager.GetConfig()
+end
+
 return ModConfigManager

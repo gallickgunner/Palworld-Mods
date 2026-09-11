@@ -4,6 +4,7 @@ local ModConfigSchema = {
 		"normal_pal_scales",
 		"boss_pal_scales",
 		"rare_pal_scales",
+		"disable_tiny_ride_pals",
 		"min_ride_scales",
 		"grant_saddles",
 		"grant_saddle_weapons",

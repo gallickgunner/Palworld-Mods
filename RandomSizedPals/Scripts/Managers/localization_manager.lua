@@ -76,6 +76,11 @@ function LocalizationManager.GetLocalizedText(key)
 	return text_options[1]
 end
 
+function LocalizationManager.Init()
+	LoadCurrentLocale()
+	config = LocalizationManager.GetConfig()
+end
+
 -- LocalizationManager doesn't support hot reloading
 --
 --function LocalizationManager.Reload()
@@ -90,7 +95,6 @@ end
 --end
 
 -- Load the current game language
-LoadCurrentLocale()
-config = LocalizationManager.GetConfig()
+
 
 return LocalizationManager
