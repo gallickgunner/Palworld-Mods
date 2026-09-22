@@ -126,7 +126,7 @@ boss_pal_scales = {
 }
 ```
 
-#### `boss_pal_scales.enabled`
+### `boss_pal_scales.enabled`
 
 When `false`, size randomization is skipped for boss Pals and they are left to their vanilla size.
 
@@ -138,7 +138,7 @@ This table defines the `min`/`max` size range for Rare/Lucky pals of each size c
 
 Current defaults intentionally mirror `normal_pal_scales`. Vanilla uses the boss size for lucky/rare pals.
 
-#### `rare_pal_scales.enabled`
+### `rare_pal_scales.enabled`
 
 When `false`, size randomization is skipped for Lucky/Rare Pals.
 
@@ -146,39 +146,39 @@ When `false`, size randomization is skipped for Lucky/Rare Pals.
 
 # Color variety
 
-### `color_variety`
+## `color_variety`
 
 This table contains all settings regarding the body-color variation.
 
-#### `color_variety.enable_color_variation`
+### `color_variety.enable_color_variation`
 
 Master toggle for Pal color variation. When disabled, color variation is not applied.
 
-#### `color_variety.apply_color_to_leaders`
+### `color_variety.apply_color_to_leaders`
 
 Controls whether wild leader Pals receive the color-variety treatment.
 
-#### `color_variety.apply_color_to_bosses`
+### `color_variety.apply_color_to_bosses`
 
 Controls whether boss Pals can receive color variation. Rare pals are not counted as bosses.
 
-#### `color_variety.saturation_min` / `color_variety.saturation_max`
+### `color_variety.saturation_min` / `color_variety.saturation_max`
 
 Saturation values used for the Pal material’s `Saturation` parameter.
 
 Vanilla value is `0.0` for the pals I checked. Saturation increases with negative values and decreases with positive. A sane range is between `-1.0 - 0.2`. These are absolute values used directly as the saturation for the pal’s material.
 
-#### `color_variety.value_offset_min` / `color_variety.value_offset_max`
+### `color_variety.value_offset_min` / `color_variety.value_offset_max`
 
 Brightness/Value offset added the Pal material’s `Value` parameter.
 
 Vanilla value is `1.2` or `1.8` for the pals I checked. Negative values darken; positive values brighten.These values are not absolute values but offsets to the native `value` parameter for pal’s material. Sane offsets are `-0.4 - 0.3`. You can tinker further.
 
-#### `color_variety.color_variation_chance`
+### `color_variety.color_variation_chance`
 
 The chance that an eligible Pal receives color variation. Use a value from `0.0` to `1.0` where `1.0` is `100%`.
 
-#### `color_variety.colors`
+### `color_variety.colors`
 
 Defines the available colors and their relative selection weights.
 
@@ -214,7 +214,7 @@ I recommend adding around `2-3` key colors. Then add their shades, for e.g 2 sha
 
 Unfortunately, I couldn't find a way to read source color programmatically. Or else we could have targeted shades for based on the source color.
 
-#### `color_variety.color_lerp_factor_min` / `color_variety.color_lerp_factor_max`
+### `color_variety.color_lerp_factor_min` / `color_variety.color_lerp_factor_max`
 
 Controls how strongly the selected replacement color is blended into the Pal’s original body material.
 
@@ -226,25 +226,25 @@ Good values are around `0 - 0.4`. `0` means the original color is preserved. Not
 
 # Rideability
 
-### `rideability`
+## `rideability`
 
-Controls size/trust restrictions for rideable Pals and optional automatic granting of ride gear. If both size and trust restrictions are enabled, failing either requirement prevents riding.
+This table controls size/trust restrictions for rideable Pals and optional automatic granting of ride gear. If both size and trust restrictions are enabled, failing either requirement prevents riding.
 
-#### `rideability.restricted_by_size`
+### `rideability.restricted_by_size`
 
 Prevents a rideable Pal from being mounted while its current scale is below the configured threshold in [`rideability.min_ride_scales`](#rideability.min_ride_scales).
 
 The Pal menu and partner-skill UI display the restriction when applicable.
 
-#### `rideability.restricted_by_trust`
+### `rideability.restricted_by_trust`
 
 Prevents a rideable Pal from being mounted until it reaches [`rideability.min_trust_level`](#rideability.min_trust_level).
 
-#### `rideability.min_trust_level`
+### `rideability.min_trust_level`
 
 Minimum friendship/trust rank required for riding when [`rideability.restricted_by_trust`](#rideability.restricted_by_trust) is enabled.
 
-#### `rideability.size_eligiblity_by_trust_progression`
+### `rideability.size_eligiblity_by_trust_progression`
 
 Controls how quickly a growing captured Pal reaches its minimum rideable size. This is a fraction of total trust progression from level `1 to 10` given as `0.0` to `1.0`. For example:
 
@@ -261,17 +261,17 @@ This only matters when [`trust.pals_grow_with_trust`](#trust.pals_grow_with_trus
 
 **Related:** [`rideability.min_ride_scales`](#rideability.min_ride_scales), [`trust.pals_grow_with_trust`](#trust.pals_grow_with_trust)
 
-#### `rideability.grant_saddles`
+### `rideability.grant_saddles`
 
 Automatically grants ordinary saddle related riding items to players when the world loads.
 
 This is useful when size/trust restrictions are intended to replace normal saddle progression. If Palworld’s built-in randomizer is enabled and already grants the relevant partner-skill items, the mod skips this grant step.
 
-#### `rideability.grant_saddle_weapons`
+### `rideability.grant_saddle_weapons`
 
 Automatically grants ride-related items that aren’t saddle but actual weapons. Examples are grizzbolt’s minigun and XYZ pal’s hammer.
 
-#### `rideability.min_ride_scales`
+### `rideability.min_ride_scales`
 
 Defines the minimum scale required to ride a Pal in each size category.
 
@@ -292,11 +292,11 @@ These values are absolute scales. The size display widget in Pal Details also sh
 
 # Trust and growth
 
-### `trust`
+## `trust`
 
-Controls Pal growth through friendship/trust and optional changes to friendship gain/loss rates.
+This table controls Pal growth through friendship/trust and optional changes to friendship gain/loss rates.
 
-#### `trust.pals_grow_with_trust`
+### `trust.pals_grow_with_trust`
 
 Determines whether Pals can grow in size based on friendship/trust.
 
@@ -304,27 +304,27 @@ When enabled, a captured pal grows from its deterministic starting size toward t
 
 **Related:** [`normal_pal_scales`](#normal_pal_scales), [`rideability.size_eligiblity_by_trust_progression`](#rideability.size_eligiblity_by_trust_progression)
 
-#### `trust.basepals_grow`
+### `trust.basepals_grow`
 
 Determines whether Base Pals can grow as well based on friendship/trust.
 
 Base Pals are checked approximately once per minute for their trust rank and applying size. Since vanilla has no way for base pals to gain trust, this mod provides it’s own settings to change that. See below
 
-#### `trust.modify_trust_gains`
+### `trust.modify_trust_gains`
 
 Master toggle for the mod’s custom trust gain/loss settings.
 
 It’s recommended to turn it on if you want base pals to grow or gain work suitability with trust ranks as vanilla palworld doesn’t give trust to base pals. Technically it does but at a very very reduced rate.
 
-#### `trust.pal_trust_petting`
+### `trust.pal_trust_petting`
 
 Raw friendship points awarded when you pet a pal
 
-#### `trust.basepal_trust_working`
+### `trust.basepal_trust_working`
 
 Friendship points awarded to a healthy Base Pal per minute if it is found in a `working` state. This trust gain stops once the Pal reaches [`trust.basepal_trust_gains_maxlvl`](#trust.basepal_trust_gains_maxlvl). Vanilla value is passive 1 per minute which is non-existant
 
-#### `trust.basepal_trust_unhealthy`
+### `trust.basepal_trust_unhealthy`
 
 Friendship modifier applied during the base trust update for unhealthy conditions.
 
@@ -340,17 +340,17 @@ Because these checks stack, a Pal suffering from multiple conditions can receive
 
 If a Pal is found unhealthy, [trust.basepal_trust_working](#trust.basepal_trust_working) is skipped even if that Pal is working. Note that unhealthy Pals can still lose trust even after reaching [`basepal_trust_gains_maxlvl`](#trust.basepal_trust_gains_maxlvl).
 
-#### `trust.partypal_trust_passive`
+### `trust.partypal_trust_passive`
 
 Passive friendship gain per minute for a Pal in the player’s party. Vanilla value is 100 per minute.
 
-#### `trust.partypal_trust_active`
+### `trust.partypal_trust_active`
 
 **Default:** `150`
 
 Friendship gain per minute for the currently active/summoned party Pal. Vanilla value is 100 per minute.
 
-#### `trust.activepal_trust_on_death`
+### `trust.activepal_trust_on_death`
 
 **Default:** `-400`
 
@@ -358,7 +358,7 @@ Friendship points added when the player’s Otomo/Party Pal is defeated. This is
 
 Use a negative number to make defeat reduce trust. Use `0` to disable the loss while keeping other custom trust settings enabled.
 
-#### `trust.activepal_trust_on_kill`
+### `trust.activepal_trust_on_kill`
 
 **Default:** `200`
 
@@ -366,7 +366,7 @@ Friendship points awarded when a Otomo Pal gets the killing blow on a wild Pal. 
 
 Use `0` to disable this reward while keeping other trust modifications enabled.
 
-#### `trust.basepal_trust_gains_maxlvl`
+### `trust.basepal_trust_gains_maxlvl`
 
 **Default:** `6`
 
@@ -380,13 +380,13 @@ Unhealthy penalties can still reduce trust above this level.
 
 # Work suitability
 
-### `work_suitability`
+## `work_suitability`
 
-Controls gender-based work-suitability differences and permanent work-suitability progression for Base Pals on trust rank-ups.
+This table controls gender-based work-suitability differences and permanent work-suitability progression for Base Pals on trust rank-ups.
 
 Only work categories a Pal already possesses are increased. A Pal with `0` suitability in a category does not gain that category from these settings.
 
-#### `work_suitability.basepals_gain_worksuit`
+### `work_suitability.basepals_gain_worksuit`
 
 Allows Base Pals to gain work-suitability rank when reaching new trust ranks. The gain is permanent individual Pal data and is capped by the game’s maximum work-suitability rank. This can’t be undone.
 
@@ -396,7 +396,7 @@ This setting only truly works if you also enable [`trust.modify_trust_gains`](#t
 
 > Note: Party pals don't gain work suitability due to trust level ups. This setting only affects base pals. If you deploy a trust level 6 party pal to the base it won't magically gain all the ranks it missed gaining.
 
-#### `work_suitability.gender_based_gains`
+### `work_suitability.gender_based_gains`
 
 Controls whether **trust-rank work-suitability gains** are filtered through the configured male/female category lists.
 
@@ -404,7 +404,7 @@ When `true`, a male Base Pal only gains ranks in categories listed under [`work_
 
 When `false`, trust rank-ups may improve any work-suitability category the Pal already has. This setting is only for base pals.
 
-#### `work_suitability.wildpal_gender_bonus`
+### `work_suitability.wildpal_gender_bonus`
 
 Work-suitability rank bonus applied to wild Pals according to the male/female category lists.
 
@@ -412,7 +412,7 @@ The bonus only applies to work categories the Pal already has and respects the g
 
 Set this to `0` to disable the initial wild gender-based work-suitability bonus. If a modified wild Pal is captured, this individual bonus persists with that Pal.
 
-#### `work_suitability.male`
+### `work_suitability.male`
 
 **Default:**
 
@@ -432,7 +432,7 @@ The array is loose; entries may be added or removed. Names must match valid Palw
 
 To make a category eligible for both genders, add the same name to both arrays.
 
-#### `work_suitability.female`
+### `work_suitability.female`
 
 **Default:**
 
@@ -452,9 +452,9 @@ Female counterpart to [`work_suitability.male`](#work_suitability.male).
 
 # Stat variety
 
-### `stats`
+## `stats`
 
-Controls individual stat variation generated for wild Pals.
+This table controls individual stat variation generated for wild Pals.
 
 The male, female, and leader profiles use the same structure:
 
@@ -495,13 +495,13 @@ Talent should range from `0 - 100` as that is the game's native cap. You can set
 
 Ranks are souls you feed to the pals via the statue of power. I haven't put a cap on this in my mod but native values are between `0-20` so stay within that range. Reason for not putting a cap is to support future changes if Palworld decides to update the limit.
 
-#### `stats.gender_bonus`
+### `stats.gender_bonus`
 
 Enable/Disable the male/female stat profiles for ordinary wild Pals.
 
 When enabled, wild Pals receive either [`stats.male`](#stats.male) or [`stats.female`](#stats.female) according to their gender. By default, males are set to have better ATK while females have better DEF and workspeed.
 
-#### `stats.leader_bonus`
+### `stats.leader_bonus`
 
 **Default:** `true`
 
@@ -509,58 +509,58 @@ Enable/Disable applying the dedicated [`stats.leader`](#statsleader) profile for
 
 Wild leaders are forced male by the leader system. If `leader_bonus` is disabled while `gender_bonus` remains enabled, leaders use the normal male stat profile instead of the leader profile.
 
-#### `stats.male`
+### `stats.male`
 
 Stat-generation profile for ordinary male wild Pals.
 
-#### `stats.female`
+### `stats.female`
 
 Stat-generation profile for ordinary female wild Pals.
 
-#### `stats.leader`
+### `stats.leader`
 
 Stat-generation profile for wild leader Pals when [`stats.leader_bonus`](#stats.leader_bonus) is enabled.
 
 
-#### `stats.<profile>.talent_bonus.enabled`
+### `stats.<profile>.talent_bonus.enabled`
 
 Enables custom Talent/IV value for the selected profile.
 
-#### `stats.<profile>.talent_bonus.atk`
+### `stats.<profile>.talent_bonus.atk`
 
 Inclusive random range used for `Talent_Shot`, which affects the Pal’s ATK stat. Recommended values should remain within Palworld’s intended Talent range, normally `0 .. 100`.
 
-#### `stats.<profile>.talent_bonus.def`
+### `stats.<profile>.talent_bonus.def`
 
 Inclusive random range used for `Talent_Defense` which affects Pal's DEF stat. Recommended range: `0 .. 100`.
 
-#### `stats.<profile>.talent_bonus.hp`
+### `stats.<profile>.talent_bonus.hp`
 
 Inclusive random range used for `Talent_HP` which affects Pal's HP stat. Recommended range: `0 .. 100`.
 
-#### `stats.<profile>.rank_bonus.enabled`
+### `stats.<profile>.rank_bonus.enabled`
 
 Enable/Disable applying custom Rank value to ATK, DEF, HP and WorkSpeed. Ranks are souls you feed via the statue of power. Enabling this allows wild pals to appear with whatever number of souls you set here. As far as I know, each rank/soul increases that particular stat by 3 or 6%. 
 
 Native cap is 20 so stay within that range.
 
-#### `stats.<profile>.rank_bonus.atk`
+### `stats.<profile>.rank_bonus.atk`
 
 Inclusive random range used for giving souls/ranks to ATK stat
 
-#### `stats.<profile>.rank_bonus.def`
+### `stats.<profile>.rank_bonus.def`
 
 Inclusive random range used for giving souls/ranks to DEF stat
 
-#### `stats.<profile>.rank_bonus.hp`
+### `stats.<profile>.rank_bonus.hp`
 
 Inclusive random range used for giving souls/ranks to HP stat
 
-#### `stats.<profile>.rank_bonus.work_speed`
+### `stats.<profile>.rank_bonus.work_speed`
 
 Inclusive random range used for giving souls/ranks to Workspeed stat
 
-#### `stats.<profile>.workspeed_bonus`
+### `stats.<profile>.workspeed_bonus`
 
 Percentage bonus applied directly to the Pal’s workspeed stat.
 
@@ -580,35 +580,35 @@ This is separate from `rank_bonus.work_speed`, so both may affect the same Pal i
 
 # Difficulty
 
-### `difficulty`
+## `difficulty`
 
 This part is kinda just cherry on the top. Controls several Palworld difficulty settings plus optional per-category damage multipliers for wild Pals.
 
-#### `difficulty.partypal_damage_taken`
+### `difficulty.partypal_damage_taken`
 
 Sets Palworld’s `OtomoDamageRate_Defense` value. This affects damage received by player companion/Otomo Pals. Higher values make party Pals take more damage; lower values make them more durable.
 
 Native value was `0.75` which means Party pals were taking 75% damage for some reason. 
 
-#### `difficulty.weakpoint_damage_rate`
+### `difficulty.weakpoint_damage_rate`
 
 Sets Palworld’s damage rate when a weakness is struck. Native value was `1.5`
 
-#### `difficulty.strongpoint_damage_rate`
+### `difficulty.strongpoint_damage_rate`
 
 Sets Palworld’s damage rate when you use a skill on a Pal that it is strong against or resists. Native value was `0.5`
 
-#### `difficulty.default_atk_skip_timeout`
+### `difficulty.default_atk_skip_timeout`
 
 Sets Palworld’s native `CommonAttackSkipTimeoutSeconds` game setting. I haven't tested this much but still gave an option for users to try out. Apparently this is an AI default attack-selection timing setting measured in seconds. Lower values should allow the relevant AI attack-selection logic to retry sooner instead of waiting long.
 
 Native value was `5` seconds. Note this is for the default attack (the attack when all active skills are on cooldown)
 
-#### `difficulty.skill_reselect_timeout`
+### `difficulty.skill_reselect_timeout`
 
 Sets Palworld’s native `WazaReselectTimeoutSeconds` game setting. This is the same as above but for active skills. Native value was `5` seconds.
 
-#### `difficulty.enable_damage_multiplier`
+### `difficulty.enable_damage_multiplier`
 
 Enables the mod’s custom damage multipliers for wild normal Pals, wild leader pals, and bosses. 
 
@@ -622,27 +622,27 @@ All multiplier values are set in percentages where `1.0` means `100%`. When usin
 
 >**Multiplayer note:** the reflected damage hook used for these per-Pal multipliers has been observed to work in Single Player and listen/Co-op hosting, but not on a dedicated server. The native difficulty settings above are separate from this custom hook.
 
-#### `difficulty.damage_rate_to_boss`
+### `difficulty.damage_rate_to_boss`
 
 Multiplier applied when a wild boss is the damage target.
 
-#### `difficulty.damage_rate_to_leader`
+### `difficulty.damage_rate_to_leader`
 
 Multiplier applied when a wild leader is the damage target.
 
-#### `difficulty.damage_rate_to_normal`
+### `difficulty.damage_rate_to_normal`
 
 Multiplier applied when an ordinary wild Pal is the damage target.
 
-#### `difficulty.damage_rate_from_boss`
+### `difficulty.damage_rate_from_boss`
 
 Multiplier applied when a wild boss is the attacker. Higher values make bosses deal more damage.
 
-#### `difficulty.damage_rate_from_leader`
+### `difficulty.damage_rate_from_leader`
 
 Multiplier applied when a wild leader is the attacker.
 
-#### `difficulty.damage_rate_from_normal`
+### `difficulty.damage_rate_from_normal`
 
 Multiplier applied when an ordinary wild Pal is the attacker.
 
