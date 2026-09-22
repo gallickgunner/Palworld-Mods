@@ -1,0 +1,15 @@
+[
+	{ "internal": "EmitFlame", "name": "Kindling" },
+	{ "internal": "Watering", "name": "Watering" },
+	{ "internal": "Seeding", "name": "Planting" },
+	{ "internal": "GenerateElectricity", "name": "Generating Electricity" },
+	{ "internal": "Handcraft", "name": "Handiwork" },
+	{ "internal": "Collection", "name": "Gathering" },
+	{ "internal": "Deforest", "name": "Lumbering" },
+	{ "internal": "Mining", "name": "Mining" },
+	{ "internal": "OilExtraction", "name": "Oil Extracting" },		// This is unused
+	{ "internal": "ProductMedicine", "name": "Medicine Production" },
+	{ "internal": "Cool", "name": "Cooling" },
+	{ "internal": "Transport", "name": "Transporting" },
+	{ "internal": "MonsterFarm", "name": "Farming" }
+]
