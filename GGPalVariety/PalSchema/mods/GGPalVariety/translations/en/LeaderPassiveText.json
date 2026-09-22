@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Pack Leader"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "ATK +{EffectValue1}% DEF +{EffectValue2}%\nPlayer ATK & DEF + {EffectValue3}% (stackable)"
+    }
+}

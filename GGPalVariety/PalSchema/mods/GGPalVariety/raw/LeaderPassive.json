@@ -1,0 +1,54 @@
+{
+    "DT_PassiveSkill_Main": {
+        "LeaderTrait": {
+            "Rank": 4,
+            "LotteryWeight": 0,
+            "OverrideDescMsgID": "PASSIVE_LeaderTrait_DESC",
+            "TargetElementType": "EPalElementType::None",
+
+            "EffectType1": "EPalPassiveSkillEffectType::ShotAttack",
+            "EffectValue1": 15.0,
+            "TargetType1": "EPalPassiveSkillEffectTargetType::ToSelf",
+
+            "EffectType2": "EPalPassiveSkillEffectType::Defense",
+            "EffectValue2": 15.0,
+            "TargetType2": "EPalPassiveSkillEffectTargetType::ToSelf",
+
+            "EffectType3": "EPalPassiveSkillEffectType::ShotAttack",
+            "EffectValue3": 3.0,
+            "TargetType3": "EPalPassiveSkillEffectTargetType::ToTrainer",
+
+            "EffectType4": "EPalPassiveSkillEffectType::Defense",
+            "EffectValue4": 3.0,
+            "TargetType4": "EPalPassiveSkillEffectTargetType::ToTrainer",
+
+            "InvokeActiveOtomo": false,
+            "InvokeWorker": false,
+            "InvokeRiding": false,
+            "InvokeReserve": false,
+            "InvokeInOtomo": false,
+            "InvokeAlways": true,
+            "InvokeInBaseCamp": false,
+
+            "AddInvokeTriggerType_1": "EPalPassiveAddTriggerType::None",
+            "AddInvokeTriggerType_2": "EPalPassiveAddTriggerType::None",
+
+            "AddPal": false,
+            "AddRarePal": false,
+            "AddWorldTreePal": false,
+            "AddMutationPal": false,
+            "AddShotWeapon": false,
+            "AddMeleeWeapon": false,
+            "AddArmor": false,
+            "AddAccessory": false,
+
+            "IsStackablePartnerSkillBySameTribe": false,
+
+            "OverrideNameTextID": "PASSIVE_LeaderTrait_NAME",
+            "OverrideSummaryTextId": "None",
+
+            "Category": "EPalPassiveCategory::SortDisplayable",
+            "SortKeyJP": "-"
+        }		
+	}
+}
