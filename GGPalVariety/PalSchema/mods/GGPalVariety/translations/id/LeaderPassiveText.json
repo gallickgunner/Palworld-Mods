@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Pemimpin Kawanan"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "ATK +{EffectValue1}% DEF +{EffectValue2}%\nATK & DEF Pemain +{EffectValue3}% (dapat ditumpuk)"
+    }
+}

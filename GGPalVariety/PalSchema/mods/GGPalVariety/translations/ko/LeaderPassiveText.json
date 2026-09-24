@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "무리의 우두머리"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "공격력 +{EffectValue1}% 방어력 +{EffectValue2}%\n플레이어 공격력 및 방어력 +{EffectValue3}% (중첩 가능)"
+    }
+}

@@ -13,15 +13,9 @@ local ProcessDamage = require("Server.process_damage")
 local Server = require("Server.server")
 local PalTraits = require("Server.pal_traits")
 
-local CDO = require("Utils.cdo")
 local PalUtils = require("Utils.pal_utils")
 local CoreUtils = require("Utils.core_utils")
-local UnrealUtils = require("Utils.unreal_utils")
 
-
--- Aliases used often
-local DebugLog = CoreUtils.DebugLog
-local IsValid = UnrealUtils.IsValid
 
 local function Main()
 	local mod_config = ModConfigManager.GetConfig()

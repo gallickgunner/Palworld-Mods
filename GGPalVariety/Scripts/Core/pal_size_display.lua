@@ -15,16 +15,15 @@ local FUNC_PATHS = UPaths.FUNC_PATHS
 local UOBJ_PATHS = UPaths.UOBJ_PATHS
 local UObjects = UnrealUtils.UObjects
 
-local ImageClass = UObjects[UOBJ_PATHS.IMAGE_CLASS_PATH]
-local widget_bp_lib = UObjects[UOBJ_PATHS.WIDGET_BLUEPRINT_LIBRARY]
-
 local size_rows = {}
 local size_rows_by_button = {}
 
 local work_suitability_y = nil
 local food_panel_y = nil
 local stats_info_height = nil
-local hover_hook_registered = false
+local button_hovered_hook_reg = false
+local button_unhovered_hook_reg = false
+local setup_status_hook_reg = false
 local mod_config = ModConfigManager.GetConfig()
 
 
@@ -53,7 +52,7 @@ local function ConstructWidget(menu, widget_class)
 end
 
 local function CreateUserWidget(menu, widget_class)
-	if not IsValid(menu) or not widget_class or not widget_bp_lib then
+	if not IsValid(menu) or not widget_class or not CDO.widget_bp_lib then
 		return nil
 	end
 
@@ -68,7 +67,7 @@ local function CreateUserWidget(menu, widget_class)
 		return nil
 	end
 
-	local widget = widget_bp_lib:Create(menu, widget_class, player_controller)
+	local widget = CDO.widget_bp_lib:Create(menu, widget_class, player_controller)
 
 	if not IsValid(widget) then
 		DebugLog("Pal size row: failed to create Pal invisible button")
@@ -218,7 +217,7 @@ local function GetNativeRowParts(menu)
 	end
 
 	local attack_icon = attack_hbox:GetChildAt(0)
-
+	local ImageClass = UObjects[UOBJ_PATHS.IMAGE_CLASS_PATH]
 	if not IsValid(attack_icon) or not attack_icon:IsA(ImageClass) then
 		return nil
 	end
@@ -450,6 +449,7 @@ local function CreateSizeRow(menu)
 
 	-- Copy native Work Speed background/decorations.
 	-- The arrow implying ATK/DEF has been boosted by a bonus is intentionally omitted.	
+	local ImageClass = UObjects[UOBJ_PATHS.IMAGE_CLASS_PATH]
 	for i = 0, native.work_canvas:GetChildrenCount() - 1 do
 		local child = native.work_canvas:GetChildAt(i)
 
@@ -698,46 +698,44 @@ local function RegisterHoverHooks()
 	NotifyOnNewObject(
 		UOBJ_PATHS.BP_PAL_COMMON_BUTTON_BASE,
 		function()
-			if hover_hook_registered then
-				return
+			if not button_hovered_hook_reg then
+				button_hovered_hook_reg = UnrealUtils.TryRegisterBPHook(
+					FUNC_PATHS.BP_PAL_COMMON_BUTTON_BASE_ON_HOVERED,
+					function(Context)
+						local button = Context:get()
+
+						if not IsValid(button) then
+							return
+						end
+
+						local row = size_rows_by_button[button:GetAddress()]
+
+						if row then
+							OpenSizeOverlay(row)
+						end
+					end
+				)
 			end
 
-			hover_hook_registered = true
+			if not button_unhovered_hook_reg then
+				button_unhovered_hook_reg = UnrealUtils.TryRegisterBPHook(
+					FUNC_PATHS.BP_PAL_COMMON_BUTTON_BASE_ON_UNHOVERED,
+					function(Context)
+						local button = Context:get()
 
-			RegisterHook(
-				FUNC_PATHS.BP_PAL_COMMON_BUTTON_BASE_ON_HOVERED,
-				function(Context)
-					local button = Context:get()
+						if not IsValid(button) then
+							return
+						end
 
-					if not IsValid(button) then
-						return
+						local row = size_rows_by_button[button:GetAddress()]
+
+						if row then
+							CloseSizeOverlay(row)
+						end
 					end
-
-					local row = size_rows_by_button[button:GetAddress()]
-
-					if row then
-						OpenSizeOverlay(row)
-					end
-				end
-			)
-
-			RegisterHook(
-				FUNC_PATHS.BP_PAL_COMMON_BUTTON_BASE_ON_UNHOVERED,
-				function(Context)
-					local button = Context:get()
-
-					if not IsValid(button) then
-						return
-					end
-
-					local row = size_rows_by_button[button:GetAddress()]
-
-					if row then
-						CloseSizeOverlay(row)
-					end
-				end
-			)
-			return true
+				)
+			end
+			return button_hovered_hook_reg and button_unhovered_hook_reg
 		end
 	)
 end
@@ -748,21 +746,22 @@ function PalSizeDisplay.Init()
 	NotifyOnNewObject(
 		UOBJ_PATHS.BP_PAL_MENU,
 		function()
-			RegisterHook(
-				FUNC_PATHS.BP_PAL_MENU_SETUP_STATUS,
-				function(Context, Handle)
-					local menu = Context:get()
-					local handle = Handle:get()
+			if not setup_status_hook_reg then
+				setup_status_hook_reg = UnrealUtils.TryRegisterBPHook(
+					FUNC_PATHS.BP_PAL_MENU_SETUP_STATUS,
+					function(Context, Handle)
+						local menu = Context:get()
+						local handle = Handle:get()
 
-					if not IsValid(menu) or not IsValid(handle) then
-						return
+						if not IsValid(menu) or not IsValid(handle) then
+							return
+						end
+						PurgeDeadRows()
+						AddSizeRow(menu, handle)
 					end
-					PurgeDeadRows()
-					AddSizeRow(menu, handle)
-				end
-			)
-
-			return true
+				)
+			end
+			return setup_status_hook_reg
 		end
 	)
 end

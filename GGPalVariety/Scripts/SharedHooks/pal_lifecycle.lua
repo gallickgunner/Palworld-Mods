@@ -13,7 +13,7 @@ local UOBJ_PATHS = UPaths.UOBJ_PATHS
 local on_end_play_cbs = {}
 local on_pal_init_cbs = {}
 local on_wildlife_action_start_cbs = {}
-
+local aiaction_wildlife_hook_reg = false
 
 function PalLifecycle.RegisterOnActorEndPlay(cb)
 	table.insert(on_end_play_cbs, cb)
@@ -56,30 +56,35 @@ function PalLifecycle.Init()
 
 	NotifyOnNewObject(UOBJ_PATHS.BP_AIACTION_WILD_LIFE,
 		function()
-			RegisterHook(
-				FUNC_PATHS.BP_WILD_LIFE_ACTION_START,
-				function(Context, ControlledPawn)
-					local action = Context:get()
-					local pal_actor = ControlledPawn:get()
+			if not aiaction_wildlife_hook_reg then
+				aiaction_wildlife_hook_reg = UnrealUtils.TryRegisterBPHook(
+					FUNC_PATHS.BP_WILD_LIFE_ACTION_START,
+					function(Context, ControlledPawn)
+						local action = Context:get()
+						local pal_actor = ControlledPawn:get()
 
-					if not IsValid(pal_actor) or not IsValid(action) then
-						return
+						if not IsValid(pal_actor) or not IsValid(action) then
+							return
+						end
+
+						---@class WLActionStartContext
+						---@field actor any
+						---@field action any
+						local context = {
+							actor = pal_actor,
+							action = action
+						}
+
+						for _, callback in ipairs(on_wildlife_action_start_cbs) do
+							callback(context)
+						end
 					end
+				)
+			end
 
-					---@class WLActionStartContext
-					---@field actor any
-					---@field action any
-					local context = {
-						actor = pal_actor,
-						action = action
-					}
-
-					for _, callback in ipairs(on_wildlife_action_start_cbs) do
-						callback(context)
-					end
-				end
-			)
-			return true
+			if aiaction_wildlife_hook_reg then
+				return true
+			end
 		end
 	)
 

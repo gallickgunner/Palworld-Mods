@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Rudelführer"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "ANG +{EffectValue1}% VTD +{EffectValue2}%\nANG & VTD des Spielers +{EffectValue3}% (stapelbar)"
+    }
+}

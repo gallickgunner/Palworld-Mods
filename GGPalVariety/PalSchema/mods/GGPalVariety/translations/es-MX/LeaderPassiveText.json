@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Líder de la Manada"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "ATQ +{EffectValue1}% DEF +{EffectValue2}%\nATQ y DEF del jugador +{EffectValue3}% (acumulable)"
+    }
+}

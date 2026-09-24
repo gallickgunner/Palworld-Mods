@@ -21,6 +21,9 @@ local RANDOMIZER_TYPE_NONE = 0
 local mod_config = ModConfigManager.GetConfig()
 local saddle_items_cache = {}
 local weapon_saddles_cache = {}
+local pskill_lock_hook_reg = false
+local palmenu_open_overlay_hook_reg = false
+
 
 
 local function wrapTextInRed(text)
@@ -264,7 +267,103 @@ local function IsRidePalRestrictedByTrust(pal)
 	return indiv_param:GetFriendshipRank() < mod_config.rideability.min_trust_level
 end
 
--- Module exported functions
+local function OnPalMenuSetPartnerSkillLock(Context, CharacterID)
+	local widget = Context:get()
+
+	if not IsValid(widget) then
+		return
+	end
+
+	local handle = widget.CachedIndividualHandle
+
+	if not IsValid(handle) then
+		return
+	end
+
+	local pal = handle:TryGetIndividualActor()
+
+	if not IsValid(pal, "Pal Actor wasn't created in post hook: %s", FUNC_PATHS.BP_PAL_MENU_PARTNER_SKILL_LOCK) then
+		return
+	end
+
+	-- Not a rideable pal, return
+	if not PalUtils.IsPalRideableFromActor(pal) then
+		return
+	end
+
+	local options = mod_config.rideability
+	local localized_text = ""
+
+	if options.restricted_by_size and IsRidePalRestrictedBySize(pal) then
+		localized_text = LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_MMENU_TEXT_SIZE_RESTR)
+	elseif options.restricted_by_trust and IsRidePalRestrictedByTrust(pal) then
+		localized_text = LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_MMENU_TEXT_TRUST_RESTR)
+	else
+		return
+	end
+
+	local party_menu_lock_text = FText(localized_text)
+	local pal_menu_detail_text = FText(localized_text)
+
+	DebugLog("Updating Pal Menu Partner Skill Widget Text")
+	widget.CanvasPanelLockText:SetVisibility(0x4)
+	widget.BackgroundBlur_Lock_1:SetVisibility(0x4)
+	widget.CanvasPanelLockText_1:SetVisibility(0x4)
+
+	widget.CanvasPanel_PartnerSkill:SetRenderOpacity(0.6)
+	widget.CanvasPanelLock_1:SetRenderOpacity(0.6)
+
+	widget.Text_PartnerSkillLockItem:SetText(pal_menu_detail_text)
+	widget.BP_PalTextBlock_C_2:SetText(party_menu_lock_text)
+end
+
+local function OnPalMenuPartnerSkillOpenOverlay(Context, RelativeWidget, AnchorPosition, OverrideInfoWidgetAlignment, Title, Info, SubInfo)
+	local widget = Context:get()
+	if not IsValid(widget) then
+		return
+	end
+
+	local relative_widget = RelativeWidget:get()
+	local lock_button = widget.WBP_PalInvisibleButton_Lock
+
+	if not IsValid(relative_widget) or not IsValid(lock_button) then
+		return
+	end
+
+	if relative_widget:GetAddress() ~= lock_button:GetAddress() then
+		return
+	end
+
+	local handle = widget.CachedIndividualHandle
+
+	if not IsValid(handle) then
+		return
+	end
+
+	local pal = handle:TryGetIndividualActor()
+	if not IsValid(pal, "Actor not valid in: %s", FUNC_PATHS.BP_PAL_MENU_PSKILL_OPEN_OVERLAY) then
+		return
+	end
+
+	local options = mod_config.rideability
+	local localized_text = ""
+
+	if options.restricted_by_size and IsRidePalRestrictedBySize(pal) then
+		localized_text = LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_OVERLAY_TEXT_SIZE_RESTR)
+	elseif options.restricted_by_trust and IsRidePalRestrictedByTrust(pal) then
+		localized_text = string.format(LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_OVERLAY_TEXT_TRUST_RESTR), options.min_trust_level)
+	else
+		return
+	end
+
+	local info = Info:get()
+	local localized_text = wrapTextInRed(localized_text)
+	DebugLog("Updating Pal Menu Partner Skill Overlay Widget Text")
+	if info and Title:get() then
+		widget.WBP_MainMenu_PalSkillInfo:DisplayCommonInfo(Title:get(), info, FText(localized_text))
+	end
+end
+
 local function RegisterRideabilityRestrictionHooks()
 	-- This function is used in locking the partner/mount skill in the main game. Also the widget padlock on the bottom center.
 	RegisterHook(
@@ -313,113 +412,22 @@ local function RegisterRideabilityRestrictionHooks()
 	NotifyOnNewObject(
 		UOBJ_PATHS.BP_PAL_MENU,
 		function()
-			RegisterHook(
-				FUNC_PATHS.BP_PAL_MENU_PARTNER_SKILL_LOCK,
-				function(Context, CharacterID)
-					local widget = Context:get()
+			if not pskill_lock_hook_reg then
+				pskill_lock_hook_reg = UnrealUtils.TryRegisterBPHook(FUNC_PATHS.BP_PAL_MENU_PARTNER_SKILL_LOCK, OnPalMenuSetPartnerSkillLock)
+			end
 
-					if not IsValid(widget) then
-						return
-					end
+			if not palmenu_open_overlay_hook_reg then
+				palmenu_open_overlay_hook_reg = UnrealUtils.TryRegisterBPHook(FUNC_PATHS.BP_PAL_MENU_PSKILL_OPEN_OVERLAY, OnPalMenuPartnerSkillOpenOverlay)
+			end
 
-					local handle = widget.CachedIndividualHandle
-
-					if not IsValid(handle) then
-						return
-					end
-
-					local pal = handle:TryGetIndividualActor()
-
-					if not IsValid(pal, "Pal Actor wasn't created in post hook: %s", FUNC_PATHS.BP_PAL_MENU_PARTNER_SKILL_LOCK) then
-						return
-					end
-
-					-- Not a rideable pal, return
-					if not PalUtils.IsPalRideableFromActor(pal) then
-						return
-					end
-
-					local options = mod_config.rideability
-					local localized_text = ""
-
-					if options.restricted_by_size and IsRidePalRestrictedBySize(pal) then
-						localized_text = LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_MMENU_TEXT_SIZE_RESTR)
-					elseif options.restricted_by_trust and IsRidePalRestrictedByTrust(pal) then
-						localized_text = LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_MMENU_TEXT_TRUST_RESTR)
-					else
-						return
-					end
-
-					local party_menu_lock_text = FText(localized_text)
-					local pal_menu_detail_text = FText(localized_text)
-
-					DebugLog("Updating Pal Menu Partner Skill Widget Text")
-					widget.CanvasPanelLockText:SetVisibility(0x4)
-					widget.BackgroundBlur_Lock_1:SetVisibility(0x4)
-					widget.CanvasPanelLockText_1:SetVisibility(0x4)
-
-					widget.CanvasPanel_PartnerSkill:SetRenderOpacity(0.6)
-					widget.CanvasPanelLock_1:SetRenderOpacity(0.6)
-
-					widget.Text_PartnerSkillLockItem:SetText(pal_menu_detail_text)
-					widget.BP_PalTextBlock_C_2:SetText(party_menu_lock_text)
-				end
-			)
-
-			RegisterHook(
-				FUNC_PATHS.BP_PAL_MENU_PSKILL_OPEN_OVERLAY,
-				function(Context, RelativeWidget, AnchorPosition, OverrideInfoWidgetAlignment, Title, Info, SubInfo)
-					local widget = Context:get()
-					if not IsValid(widget) then
-						return
-					end
-
-					local relative_widget = RelativeWidget:get()
-					local lock_button = widget.WBP_PalInvisibleButton_Lock
-
-					if not IsValid(relative_widget) or not IsValid(lock_button) then
-						return
-					end
-
-					if relative_widget:GetAddress() ~= lock_button:GetAddress() then
-						return
-					end
-
-					local handle = widget.CachedIndividualHandle
-
-					if not IsValid(handle) then
-						return
-					end
-
-					local pal = handle:TryGetIndividualActor()
-					if not IsValid(pal, "Actor not valid in: %s", FUNC_PATHS.BP_PAL_MENU_PSKILL_OPEN_OVERLAY) then
-						return
-					end
-
-					local options = mod_config.rideability
-					local localized_text = ""
-
-					if options.restricted_by_size and IsRidePalRestrictedBySize(pal) then
-						localized_text = LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_OVERLAY_TEXT_SIZE_RESTR)
-					elseif options.restricted_by_trust and IsRidePalRestrictedByTrust(pal) then
-						localized_text = string.format(LocalizationManager.GetLocalizedText(LocalizeTextKeys.PAL_OVERLAY_TEXT_TRUST_RESTR), options.min_trust_level)
-					else
-						return
-					end
-
-					local info = Info:get()
-					local localized_text = wrapTextInRed(localized_text)
-					DebugLog("Updating Pal Menu Partner Skill Overlay Widget Text")
-					if info and Title:get() then
-						widget.WBP_MainMenu_PalSkillInfo:DisplayCommonInfo(Title:get(), info, FText(localized_text))
-					end
-				end
-			)
-			return true
+			if pskill_lock_hook_reg and palmenu_open_overlay_hook_reg then
+				return true
+			end
 		end
 	)
 end
 
+-- Module exported functions
 function Ride.Init()
 	local options = mod_config.rideability
 	if options.restricted_by_size or options.restricted_by_trust then

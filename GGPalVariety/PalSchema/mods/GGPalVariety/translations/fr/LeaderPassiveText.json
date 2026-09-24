@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Chef de Meute"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "ATQ +{EffectValue1}% DÉF +{EffectValue2}%\nATQ et DÉF du joueur +{EffectValue3}% (cumulable)"
+    }
+}

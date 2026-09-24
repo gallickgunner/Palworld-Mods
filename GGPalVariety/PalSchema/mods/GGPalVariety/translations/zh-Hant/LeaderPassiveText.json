@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "群體領袖"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "攻擊力 +{EffectValue1}% 防禦力 +{EffectValue2}%\n玩家攻擊力與防禦力 +{EffectValue3}%（可疊加）"
+    }
+}

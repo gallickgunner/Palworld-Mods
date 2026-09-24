@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Thủ Lĩnh Bầy Đàn"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "TẤN CÔNG +{EffectValue1}% PHÒNG THỦ +{EffectValue2}%\nTẤN CÔNG & PHÒNG THỦ của người chơi +{EffectValue3}% (cộng dồn)"
+    }
+}

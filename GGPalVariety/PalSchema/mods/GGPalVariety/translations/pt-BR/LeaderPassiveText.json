@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Líder da Matilha"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "ATQ +{EffectValue1}% DEF +{EffectValue2}%\nATQ e DEF do jogador +{EffectValue3}% (acumulável)"
+    }
+}

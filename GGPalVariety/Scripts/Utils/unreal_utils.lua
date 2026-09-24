@@ -10,7 +10,7 @@ setmetatable(UnrealUtils.UObjects, {
 		local object = StaticFindObject(path)
 
 		if not object or not object:IsValid() then
-			CoreUtils.DebugLog("Failed to find Unreal Object: " .. path)
+			CoreUtils.Log("Failed to find Unreal Object: " .. path)
 			return nil
 		end
 
@@ -45,6 +45,17 @@ function UnrealUtils.GetString(name)
 	end
 
 	return ""
+end
+
+function UnrealUtils.TryRegisterBPHook(path, callback)
+	local success, pre_id, post_id = pcall(RegisterHook, path, callback)
+
+	if not success then
+		CoreUtils.Log("Hook function not ready | %s | %s", path, tostring(pre_id))
+		return false
+	end
+
+	return true
 end
 
 return UnrealUtils

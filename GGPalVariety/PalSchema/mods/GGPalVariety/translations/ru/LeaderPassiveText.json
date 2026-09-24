@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Вожак стаи"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "АТК +{EffectValue1}% ЗАЩ +{EffectValue2}%\nАТК и ЗАЩ игрока +{EffectValue3}% (суммируется)"
+    }
+}

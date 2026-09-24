@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Przywódca Stada"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "ATK +{EffectValue1}% DEF +{EffectValue2}%\nATK i DEF gracza +{EffectValue3}% (kumuluje się)"
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "Sürü Lideri"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "SALDIRI +{EffectValue1}% SAVUNMA +{EffectValue2}%\nOyuncu SALDIRI & SAVUNMA +{EffectValue3}% (birikebilir)"
+    }
+}

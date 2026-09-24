@@ -1,0 +1,8 @@
+{
+    "DT_SkillNameText": {
+        "PASSIVE_LeaderTrait_NAME": "群れのリーダー"
+    },
+    "DT_SkillDescText": {
+        "PASSIVE_LeaderTrait_DESC": "攻撃力 +{EffectValue1}% 防御力 +{EffectValue2}%\nプレイヤーの攻撃力・防御力 +{EffectValue3}%（重複可）"
+    }
+}
