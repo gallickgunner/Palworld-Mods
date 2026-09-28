@@ -82,12 +82,12 @@ return {
 		apply_color_to_bosses = false,
 
 		saturation_min = -0.7,
-		saturation_max = 0.1,
+		saturation_max = 0.15,
 
 		value_offset_min = -0.3,
 		value_offset_max = 0.1,
 
-		color_variation_chance = 0.8,
+		color_variation_chance = 0.75,
 
 		colors = {
 			{ id = "red",    r = 1.00,  g = 0.18,  b = 0.13, weight = 30 }, -- red
@@ -128,7 +128,7 @@ return {
 		basepals_grow = true,
 
 		modify_trust_gains = true,
-		pal_trust_petting = 12000,
+		pal_trust_petting = 350,
 		basepal_trust_working = 50,
 		basepal_trust_unhealthy = -20,
 		partypal_trust_passive = 150,
@@ -304,6 +304,8 @@ return {
 	},
 
 	pals_spawn_disordered = true,
+	solo_spawn_leader_chance = 0.4,
+
 	uninstall_mode = false,
 	enable_hot_reload = true,
 	hot_reload_key = "HOME",
