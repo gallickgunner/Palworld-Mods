@@ -254,6 +254,7 @@ local function OnWildLifeActionStart(context)
 
 	local indiv_param = CDO.pal_utility:GetIndividualCharacterParameterByActor(pal_actor)
 	local id = PalUtils.GetPalInstanceIdFromActor(pal_actor)
+
 	if not IsValid(indiv_param) or not id then
 		return
 	end
@@ -273,7 +274,7 @@ local function OnWildLifeActionStart(context)
 		indiv_param = indiv_param
 	}
 
-	local is_leader = pal_controller:GetIsSquadBehaviour() and pal_controller:IsLeader()
+	local is_leader = mod_config.unique_leader_pals and pal_controller:GetIsSquadBehaviour() and pal_controller:IsLeader()
 	local squad = pal_controller:GetSquad()
 
 	if is_leader and IsValid(squad) then

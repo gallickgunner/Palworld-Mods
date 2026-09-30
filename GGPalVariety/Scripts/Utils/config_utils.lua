@@ -98,7 +98,7 @@ local function SerializeValue(value, indent, schema)
 					string.format(
 						"%s%s,",
 						padding,
-						SerializeValue(child_value, indent + 1)
+						SerializeValue(child_value, indent + 1, schema)
 					)
 				)
 			end

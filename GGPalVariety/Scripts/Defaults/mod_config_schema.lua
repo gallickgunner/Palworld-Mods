@@ -4,6 +4,8 @@ local ModConfigSchema = {
 		"randomize_seed_size",
 		"randomize_seed_color",
 		"randomize_captured_pals",
+		"unique_leader_pals",
+		"solo_spawn_leader_chance",
 		"leader_pal_scale_offset",
 		"display_size_widget",
 		"normal_pal_scales",
@@ -16,7 +18,6 @@ local ModConfigSchema = {
 		"stats",
 		"difficulty",
 		"pals_spawn_disordered",
-		"solo_spawn_leader_chance",
 		"uninstall_mode",
 		"enable_hot_reload",
 		"hot_reload_key",
@@ -100,6 +101,7 @@ local ModConfigSchema = {
 
 		colors = {
 			__loose = true,
+			__order = { "id", "r", "g", "b", "weight" },
 		},
 	},
 

@@ -195,8 +195,10 @@ end
 local function GetUniqueScale(unique_id, range, is_boss)
 	-- Get normalized hashed id from Fnv1a32 in range 0-1
 	local unit = FnvHash(unique_id) / Constants.UNSIGNED_MAX
+
 	-- if not a boss, subtract a small value to ensure everybody is smaller than the leader and leader is visually distinguishable
-	local max_val = is_boss and range.max or math.max(range.min, range.max - mod_config.leader_pal_scale_offset)
+	local leader_pal_offset = mod_config.unique_leader_pals and mod_config.leader_pal_scale_offset or 0.0
+	local max_val = is_boss and range.max or math.max(range.min, range.max - leader_pal_offset)
 	return range.min + unit * (max_val - range.min)
 end
 
@@ -670,6 +672,7 @@ local function OnPalInit(context)
 	end
 
 	local is_leader = PalUtils.HasPassiveSkill(indiv_param, LEADER_PASSIVE_SKILL_NAME)
+
 	if not mod_config.randomize_captured_pals and CDO.pal_utility:IsOtomo(pal_actor) then
 		DebugLog("PAL INIT | leader Skill found | ID: %s", instance_id)
 		return
@@ -708,6 +711,24 @@ end
 function PalVisuals.Init()
 	ModConfigManager.RegisterHotReloadCallback(OnHotReload)
 
+	-- Apply size/color on pal character initialization.
+	PalLifeCycle.RegisterOnInitializedCharacter(OnPalInit)
+
+
+	if mod_config.trust.basepals_grow then
+		-- Apply size to base pals as trust growth for base pals is checked/updated every minute
+		TrustGrowth.RegisterOnUpdateBasePalsGrowth(UpdateBasePalsGrowth)
+	end
+
+	if mod_config.trust.pals_grow_with_trust then
+		-- Check Trust growth and Apply Size to party pals on the server + client whenever they activate.
+		CheckPartyPalsTrustGrowth()
+	end
+
+	if not mod_config.unique_leader_pals then
+		return
+	end
+
 	-- Reset Leader Cache on Server everytime a new world is loaded
 	Server.RegisterOnNewWorldLoadedCallback(ResetStateOnServerLoadedNewWorld)
 
@@ -717,19 +738,8 @@ function PalVisuals.Init()
 	-- Apply size to wild leaders on server. On Clients we handle it by checking Leader pal unique skill in Pal Initializaiton and CharParam Replication hooks
 	PalTraits.RegisterOnWildLeaderFoundCb(OnWildLeaderFoundOnServer)
 
-	-- Apply size to base pals as trust growth for base pals is checked/updated every minute
-	TrustGrowth.RegisterOnUpdateBasePalsGrowth(UpdateBasePalsGrowth)
-
-	-- Check Trust growth and Apply Size to party pals on the server + client whenever they activate.
-	CheckPartyPalsTrustGrowth()
-
-
-	-- Apply size on pal character initialization.
-	PalLifeCycle.RegisterOnInitializedCharacter(OnPalInit)
-
-	-- Remove pal from leader cache once the actor expires.
+	-- Remove pal from leader cache once the actor expires.	
 	PalLifeCycle.RegisterOnActorEndPlay(OnPalActorEndPlay)
-
 
 	-- In some cases our custom leader skill added from the server replicates on client after the actor has already initialized.
 	-- In such cases we apply the leader size here as well

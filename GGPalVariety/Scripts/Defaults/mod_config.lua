@@ -4,7 +4,10 @@ local DefaultModConfig = {
 	randomize_seed_color = "default_color",
 	randomize_captured_pals = true,
 
+	unique_leader_pals = true,
+	solo_spawn_leader_chance = 0.4,
 	leader_pal_scale_offset = 0.2,
+
 	display_size_widget = true,
 	normal_pal_scales = {
 		XS = {
@@ -305,7 +308,6 @@ local DefaultModConfig = {
 	},
 
 	pals_spawn_disordered = true,
-	solo_spawn_leader_chance = 0.4,
 
 	uninstall_mode = false,
 	enable_hot_reload = true,

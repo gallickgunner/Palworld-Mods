@@ -65,6 +65,12 @@ randomize_seed_size = "default_color"
 
 Controls whether the mod applies its **size and color randomization** to captured/party Pals. If `false` then only wild pals are randomized.
 
+
+### `unique_leader_pals`
+
+Enabling this makes each wild pal group have a unique leader that is the largest among it's follower pals. It also has a unique leader skill named "Pack Leader".
+
+
 ### `leader_pal_scale_offset`
 
 **Default:** `0.2`
